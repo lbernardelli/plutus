@@ -4,6 +4,9 @@ class CreatePlutusTables < ActiveRecord::Migration[4.2]
     create_table :plutus_accounts do |t|
       t.string :name
       t.string :type
+      t.string :main_account_number
+      t.string :configurable_account_number
+      t.string :sub_account_name
       t.boolean :contra, default: false
 
       t.timestamps

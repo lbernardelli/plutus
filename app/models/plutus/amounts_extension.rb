@@ -13,13 +13,24 @@ module Plutus
     #   => #<BigDecimal:103259bb8,'0.2E4',4(12)>
     #
     # @return [BigDecimal] The decimal value balance
-    def balance(hash={})
+    def balance(hash = {})
+      business_id = hash[:business_id]
+
       if hash[:from_date] && hash[:to_date]
         from_date = hash[:from_date].kind_of?(Date) ? hash[:from_date] : Date.parse(hash[:from_date])
         to_date = hash[:to_date].kind_of?(Date) ? hash[:to_date] : Date.parse(hash[:to_date])
-        includes(:entry).where('plutus_entries.date' => from_date..to_date).sum(:amount)
+
+        if business_id
+          includes(:entry).where('plutus_entries.date' => from_date..to_date).where("plutus_entries.business_id = ?", business_id).sum(:amount)
+        else
+          includes(:entry).where('plutus_entries.date' => from_date..to_date).sum(:amount)
+        end
       else
-        sum(:amount)
+        if business_id
+          includes(:entry).where("plutus_entries.business_id = ?", business_id).sum(:amount)
+        else
+          sum(:amount)
+        end
       end
     end
 

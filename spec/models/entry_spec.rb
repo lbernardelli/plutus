@@ -21,7 +21,12 @@ module Plutus
       before {
         entry.debit_amounts << FactoryGirl.build(:debit_amount, entry: entry)
       }
-      it { is_expected.not_to be_valid }
+
+      it do
+        subject
+
+        is_expected.not_to be_valid
+      end
 
       context "with an invalid credit" do
         before {

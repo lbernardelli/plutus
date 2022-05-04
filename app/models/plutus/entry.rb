@@ -26,8 +26,10 @@ module Plutus
 
     if ActiveRecord::VERSION::MAJOR > 4
       belongs_to :commercial_document, :polymorphic => true, optional: true
+      belongs_to :business, :polymorphic => true, optional: false
     else
       belongs_to :commercial_document, :polymorphic => true
+      belongs_to :business, :polymorphic => true
     end
 
     has_many :credit_amounts, :extend => AmountsExtension, :class_name => 'Plutus::CreditAmount', :inverse_of => :entry
@@ -57,21 +59,26 @@ module Plutus
     end
 
     private
-      def default_date
-        todays_date = ActiveRecord::Base.default_timezone == :utc ? Time.now.utc : Time.now
-        self.date ||= todays_date
-      end
 
-      def has_credit_amounts?
-        errors[:base] << "Entry must have at least one credit amount" if self.credit_amounts.blank?
-      end
+    def default_date
+      todays_date = ActiveRecord.default_timezone == :utc ? Time.now.utc : Time.now
+      self.date ||= todays_date
+    end
 
-      def has_debit_amounts?
-        errors[:base] << "Entry must have at least one debit amount" if self.debit_amounts.blank?
+    def has_credit_amounts?
+      if self.credit_amounts.blank?
+        errors.add(:base, "Entry must have at least one credit amount")
       end
+    end
 
-      def amounts_cancel?
-        errors[:base] << "The credit and debit amounts are not equal" if credit_amounts.balance_for_new_record != debit_amounts.balance_for_new_record
+    def has_debit_amounts?
+      if self.debit_amounts.blank?
+        errors.add(:base, "Entry must have at least one debit amount")
       end
+    end
+
+    def amounts_cancel?
+      errors.add(:base, "The credit and debit amounts are not equal")  if credit_amounts.balance_for_new_record != debit_amounts.balance_for_new_record
+    end
   end
 end

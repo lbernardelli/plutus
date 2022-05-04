@@ -10,6 +10,9 @@ module Plutus
   mattr_accessor :tenant_class
   tenant_class = nil
 
+  # mattr_accessor :business_class
+  # business_class = nil
+
 
   # provide hook to configure attributes
   def self.config

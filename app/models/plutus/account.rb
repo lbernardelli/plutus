@@ -21,6 +21,14 @@ module Plutus
   # Each sublclass account acts as it's own ledger. See the individual subclasses for a
   # description.
   #
+  #
+  #
+  # add_to_account(:debit, :client_reserve, funding_snapshot, client_reserve_debit)
+  # add_to_account(:credit, :cash, funding_snapshot, cash_out)
+  # add_to_account(:credit, :fee_income, funding_snapshot, fee.amount)
+  #
+  #
+  #
   # @abstract
   #   An account must be a subclass to be saved to the database. The Account class
   #   has a singleton method {trial_balance} to calculate the balance on all Accounts.
@@ -47,7 +55,7 @@ module Plutus
         ::Plutus::Equity,
         ::Plutus::Expense,
         ::Plutus::Liability,
-        ::Plutus::Revenue,
+        ::Plutus::Revenue
       ]
     end
 
